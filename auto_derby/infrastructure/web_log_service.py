@@ -101,7 +101,7 @@ class WebLogService(Service):
                 host, port = httpd.server_address
                 url = f"http://{host}:{port}"
                 _LOGGER.info("web log service start at:\t%s", url)
-                webview.open(url)
+                # webview.open(url)
                 ready.set()
                 httpd.serve_forever()
 

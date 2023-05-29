@@ -8,7 +8,7 @@ Set-Location $WorkspaceFolder
 
 
 try {
-    $version = & git.exe describe --dirty --always 
+    $version = & git.exe describe --dirty --always
 }
 catch {
 }
@@ -29,22 +29,22 @@ $data = New-Object NateScarlet.AutoDerby.DataContext -Property @{
     DefaultSingleModeChoicesDataPath = [System.IO.Path]::GetFullPath("data/single_mode_choices.csv")
     DefaultPythonExecutablePath      = . {
         try {
-            & py.exe -3.8 -c 'import sys; print(sys.executable)'
+            & py.exe -c 'import sys; print(sys.executable)'
         }
         catch {
-            
+
         }
     }
 }
 $mainWindow.DataContext = $data
 
-$mainWindow.Content.FindName('startButton').add_Click( 
+$mainWindow.Content.FindName('startButton').add_Click(
     {
         $mainWindow.DialogResult = $true
         $mainWindow.Close()
     }
 )
-$mainWindow.Content.FindName('chooseSingleModeChoicesDataPathButton').add_Click( 
+$mainWindow.Content.FindName('chooseSingleModeChoicesDataPathButton').add_Click(
     {
         $dialog = New-Object Microsoft.Win32.SaveFileDialog -Property @{
             Title            = "Choose single mode choices"
@@ -57,15 +57,15 @@ $mainWindow.Content.FindName('chooseSingleModeChoicesDataPathButton').add_Click(
                     Split-Path $data.SingleModeChoicesDataPath -Parent
                 }
                 catch {
-                } 
+                }
             }
         }
         if ($dialog.ShowDialog()) {
             $data.SingleModeChoicesDataPath = $dialog.FileName
-        } 
+        }
     }
 )
-$mainWindow.Content.FindName('choosePythonExecutablePathButton').add_Click( 
+$mainWindow.Content.FindName('choosePythonExecutablePathButton').add_Click(
     {
         $dialog = New-Object Microsoft.Win32.OpenFileDialog -Property @{
             Title            = "Choose python executable"
@@ -85,7 +85,7 @@ $mainWindow.Content.FindName('choosePythonExecutablePathButton').add_Click(
     }
 )
 
-$mainWindow.Content.FindName('selectPluginButton').add_Click( 
+$mainWindow.Content.FindName('selectPluginButton').add_Click(
     {
         $env:AUTO_DERBY_PLUGINS = $data.Plugins
         & $data.PythonExecutablePath "$PSScriptRoot\select_plugin.py" | ForEach-Object {
@@ -105,7 +105,7 @@ if (-not $mainWindow.ShowDialog()) {
 
 $data | Format-List -Property (
     "Job",
-    "Debug", 
+    "Debug",
     "CheckUpdate",
     "PythonExecutablePath",
     "SingleModeChoicesDataPath",
@@ -116,7 +116,7 @@ $data | Format-List -Property (
     @{
         Name       = "Version"
         Expression = { $version }
-    }, 
+    },
     @{
         Name       = "Python Version"
         Expression = { & "$($Data.PythonExecutablePath)" -VV }
@@ -125,7 +125,7 @@ $data | Format-List -Property (
 
 
 & "$WorkspaceFolder/auto_derby/launcher/migrate_data.ps1"
-if ($data.Debug) {   
+if ($data.Debug) {
     $env:DEBUG = "auto_derby"
     $env:AUTO_DERBY_LAST_SCREENSHOT_SAVE_PATH = "debug/last_screenshot.png"
     $env:AUTO_DERBY_OCR_IMAGE_PATH = "debug/ocr_images"
@@ -190,11 +190,11 @@ if ($data.Debug) {
     Remove-Item -Recurse -Force trash.local
 
     "Installed packages: "
-    
+
     & cmd.exe /c "`"$($Data.PythonExecutablePath)`" -m pip list 2>&1" | Select-String (
         '^opencv-python\b',
-        '^opencv-contrib-python\b', 
-        '^pywin32\b', 
+        '^opencv-contrib-python\b',
+        '^pywin32\b',
         '^numpy\b',
         '^Pillow\b',
         '^mouse\b',
